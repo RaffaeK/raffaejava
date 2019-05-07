@@ -28,6 +28,7 @@ public class SearchResultPanel extends JPanel implements ActionListener {
 	private JPanel leftPanel;
 	private JPanel rightPanel; 
 	private JTextField searchText;
+	private ArrayList<String> listOfPdfs;
 	
 	public SearchResultPanel() {
 		setLayout(new GridLayout(1,1));
@@ -65,9 +66,25 @@ public class SearchResultPanel extends JPanel implements ActionListener {
 	public void displayAllPdfsInFolder() {
         final File folder = this.selectedFolder;
 
-        ArrayList<String> listOfPdfs = new ArrayList<String>();
+        listOfPdfs = new ArrayList<String>();
 
-        search(".*\\.pdf", folder, listOfPdfs);
+//        search(".*\\.pdf", folder, listOfPdfs);
+        
+        File directory = folder;
+
+        // get all the files from a directory
+        File[] fList = directory.listFiles();
+
+        //filter all PDF from list of files
+        
+        // add label here that says please wait
+        
+
+        
+        getPDFs(fList);
+        
+        
+        //remove it here
 
         if ( listOfPdfs.size() > 0 ) {
             for (String pdfName : listOfPdfs) {
@@ -81,20 +98,54 @@ public class SearchResultPanel extends JPanel implements ActionListener {
         }
 
 	}
+
+	private void getPDFs(File[] fList) {
+		
+		// loop all enheter (kan være både mapper og filer)
+		
+		if (fList != null) {
+			for (File file : fList) {
+
+				// hvis du finner fil, gjør dette
+				if (file.isFile()) {
+					
+					//hvis filen er pdf så print navnet
+	            	if(file.getName().endsWith(".pdf")) {
+	            	    //it is a .pdf file!
+	            		
+	            		System.out.println(file.getAbsolutePath());
+	            		listOfPdfs.add(file.getAbsolutePath());
+	            	}
+	                
+	            }
+				//hvis man finner enda en mappe, kjør denne funksjonen på nytt med filer oppi denne mappen
+				else if (file.isDirectory()) {
+	                getPDFs(file.listFiles());
+	            }
+	        }
+		}
+		
+	}
 	
     public static void search(final String pattern, final File folder, ArrayList<String> result) {
-        for (final File f : folder.listFiles()) {
+    	
+    	if (folder != null ) {
+            for (final File f : folder.listFiles()) {
 
-            if (f.isDirectory()) {
-                search(pattern, f, result);
-            }
-
-            if (f.isFile()) {
-                if (f.getName().matches(pattern)) {
-                    result.add(f.getAbsolutePath());
+                if (f.isDirectory()) {
+                    search(pattern, f, result);
+                    System.out.println(f);
+                    System.out.println(result);
                 }
-            }
 
-        }
+                if (f.isFile()) {
+                    if (f.getName().matches(pattern)) {
+                        result.add(f.getAbsolutePath());
+                    }
+                }
+
+            }
+    	}
+
     }
 }
