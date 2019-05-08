@@ -31,7 +31,6 @@ public class MainWindow extends JFrame implements ActionListener {
 		// setter vinduet i midten//
 		this.setLocationRelativeTo(null);
 
-		this.getContentPane().setBackground(Color.cyan);
 
 		this.setMenuBar();
 

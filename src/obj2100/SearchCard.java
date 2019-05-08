@@ -90,6 +90,7 @@ public class SearchCard extends JPanel implements ActionListener  {
 		             
 		             //set searchResultPanel visibility to true
 		             searchResultPanel.setVisible(true);
+		             searchResultPanel.clearLeftPanel();
 		             folder = yourFolder;
 		             
 		        	  if ( selectedFolderLabel != null) {
@@ -99,16 +100,17 @@ public class SearchCard extends JPanel implements ActionListener  {
 		             selectedFolderLabel = new JLabel("Valgt mappe: " + folder.getAbsolutePath(), JLabel.LEFT);
 					 
 					 searchResultPanel.setSelectedFolder(folder);
-					 
 
 					 Thread t1 = new Thread(new Runnable() {
 					     @Override
 					     public void run() {
 					         // code goes here.
-					    	 searchResultPanel.displayAllPdfsInFolder();
+					    	 searchResultPanel.searchPdfsInFolder();
 					     }
 					 });  
 					 t1.start();
+					 
+					 
 					 
 					 // tell searchResult to get this path and find pdfs from there
 					 
