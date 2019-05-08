@@ -26,25 +26,30 @@ public class SearchCard extends JPanel implements ActionListener  {
 	private Color color;
 	private String title;
 	private File folder;
-	private JLabel f;
+	private JLabel selectedFolderLabel;
 	private JPanel searchCardMenu;
 	private SearchResultPanel searchResultPanel;
+	private JLabel pleaseWaitLabel;
 	
 	public SearchCard(String title) {
 		setTitle(title);
 		setLayout(new BorderLayout());
 		searchCardMenu = new JPanel();
-		searchCardMenu.setLayout(new GridLayout(2,2));
+		searchCardMenu.setLayout(new GridLayout(3,2));
         searchCardMenu.setSize(600, 100);
 		JLabel lab1 = new JLabel(title, JLabel.CENTER);
 		searchCardMenu.add(lab1); 
 		
 	
+
+		
 		JButton myButton = new JButton("Velg Mappe");
         searchCardMenu.add(myButton);
         
         add(searchCardMenu, BorderLayout.NORTH);
         
+
+		
         
         setButtonAction(myButton);
 		
@@ -65,29 +70,51 @@ public class SearchCard extends JPanel implements ActionListener  {
 		myButton.addActionListener(new ActionListener() {
 	          public void actionPerformed(ActionEvent e) {
 	        	  
-	        	  if ( f != null) {
-	        		  searchCardMenu.remove(f);
+	        	  if ( selectedFolderLabel != null) {
+	        		  searchCardMenu.remove(selectedFolderLabel);
 	        	  }
+	      		 selectedFolderLabel = new JLabel("Please wait ....", JLabel.LEFT);
+	    		 searchCardMenu.add(selectedFolderLabel); 
+	    		 selectedFolderLabel.setVisible(false);
+	        	  
 	        	   	 
 		         JFileChooser fc = new JFileChooser();
 		         fc.setCurrentDirectory(new java.io.File(".")); // start at application current directory
 		         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		         int returnVal = fc.showOpenDialog(myButton);
 		         if(returnVal == JFileChooser.APPROVE_OPTION) {
+		        	 
+		        	 
 		             File yourFolder = fc.getSelectedFile();
 		             System.out.println(yourFolder);
 		             
 		             //set searchResultPanel visibility to true
 		             searchResultPanel.setVisible(true);
+		             searchResultPanel.clearLeftPanel();
 		             folder = yourFolder;
+		             
+		        	  if ( selectedFolderLabel != null) {
+		        		  searchCardMenu.remove(selectedFolderLabel);
+		        	  }
 
-					 f = new JLabel("Valgt mappe: " + folder.getAbsolutePath(), JLabel.LEFT);
+		             selectedFolderLabel = new JLabel("Valgt mappe: " + folder.getAbsolutePath(), JLabel.LEFT);
 					 
 					 searchResultPanel.setSelectedFolder(folder);
-					 searchResultPanel.displayAllPdfsInFolder();
+
+					 Thread t1 = new Thread(new Runnable() {
+					     @Override
+					     public void run() {
+					         // code goes here.
+					    	 searchResultPanel.searchPdfsInFolder();
+					     }
+					 });  
+					 t1.start();
+					 
+					 
+					 
 					 // tell searchResult to get this path and find pdfs from there
 					 
-					 searchCardMenu.add(f); 
+					 searchCardMenu.add(selectedFolderLabel); 
 				     revalidate();
 				     repaint();
 		        }
